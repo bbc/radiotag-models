@@ -15,6 +15,10 @@ class Solr
     raise RuntimeError, "You must configure the SOLR host in config/solr.yml, e.g.\n:host: solr.example.com"
   end
 
+  def self.solr_host
+    SOLR_HOST
+  end
+
   def initialize(tag_time, service_key)
     @tag_time = Time.at(tag_time).utc.xmlschema
     @service_key = service_key
@@ -31,7 +35,7 @@ class Solr
   def data
     begin
       proxy = ENV['http_proxy'] ? URI.parse(ENV['http_proxy']) : OpenStruct.new
-      http = Net::HTTP::Proxy(proxy.host, proxy.port, proxy.user, proxy.password).new(SOLR_HOST, 80)
+      http = Net::HTTP::Proxy(proxy.host, proxy.port, proxy.user, proxy.password).new(self.class.solr_host, 80)
 
       response = http.get(query_path)
       return JSON.parse(response.body)

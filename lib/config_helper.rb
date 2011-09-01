@@ -1,3 +1,12 @@
+# add require_relative
+unless Kernel.respond_to?(:require_relative)
+  module Kernel
+    def require_relative(path)
+      require File.join(File.dirname(caller[0]), path.to_str)
+    end
+  end
+end
+
 require 'yaml'
 require_relative 'load_path'
 require_relative 'erb_binding'
